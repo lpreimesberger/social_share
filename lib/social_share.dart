@@ -161,6 +161,42 @@ class SocialShare {
     return version;
   }
 
+  /*
+          val text: String? = call.argument("text")
+        val image: String? = call.argument("image")
+
+   */
+  static Future<String> shareTwitterImage(String text,
+      {List<String> tags, String image}) async {
+    Map<String, dynamic> args;
+    String modifiedUrl;
+    if (Platform.isAndroid) {
+      modifiedUrl = Uri.parse(url).toString().replaceAll('#', "%23");
+    } else {
+      modifiedUrl = Uri.parse(url).toString();
+    }
+    if (hashtags != null && hashtags.isNotEmpty) {
+      String tags = "";
+      hashtags.forEach((f) {
+        tags += ("%23" + f.toString() + " ").toString();
+      });
+      args = <String, dynamic>{
+        "text":
+        Uri.parse(text + "\n" + tags.toString()).toString(),
+        "image": image
+
+      };
+    } else {
+      args = <String, dynamic>{
+        "text": Uri.parse(captionText + " ").toString(),
+        "image": image
+
+      };
+    }
+    final String version = await _channel.invokeMethod('shareTwitterImage', args);
+    return version;
+  }
+
   static Future<String> shareSms(String message,
       {String url, String trailingText}) async {
     Map<String, dynamic> args;

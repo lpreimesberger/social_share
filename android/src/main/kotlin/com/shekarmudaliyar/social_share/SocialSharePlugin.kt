@@ -176,6 +176,24 @@ class SocialSharePlugin(private val registrar: Registrar):  MethodCallHandler {
 
           }
       }
+  }else if(call.method == "shareTwitterImage"){
+        //shares images on twitter
+        val text: String? = call.argument("text")
+        val image: String? = call.argument("image")
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse("https://mobile.twitter.com/compose/tweet")
+        val imageUri = Uri.parse(image)
+        i.putExtra(Intent.EXTRA_TEXT, text)
+        intent.putExtra(Intent.EXTRA_STREAM, imageUri)
+        intent.type = "image/jpeg"
+        try {
+            registrar.activity().startActivity(intent)
+            result.success("true")
+        } catch (ex: ActivityNotFoundException) {
+            result.success("false")
+
+        }
+    }
       else if(call.method == "shareTelegram"){
           //shares content on Telegram
           val content: String? = call.argument("content")
